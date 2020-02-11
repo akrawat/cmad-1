@@ -7,6 +7,9 @@ pipeline {
 
    stages {
       stage('build') {
+         when {
+            changeset "java/cmad-ms-users/**"
+         }
          steps {
             echo 'compiling users service'
             dir('java/cmad-ms-users') {
@@ -15,6 +18,9 @@ pipeline {
          }
       }
       stage('test') {
+         when {
+            changeset "java/cmad-ms-users/**"
+         }
          steps {
             echo 'running unit tests on users service'
             dir('java/cmad-ms-users') {
@@ -24,7 +30,7 @@ pipeline {
       }
       stage('package') {
          when {
-            branch "master"
+            changeset "java/cmad-ms-users/**"
          }
          steps {
             echo 'packaging users app'
