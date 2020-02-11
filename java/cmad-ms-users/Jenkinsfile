@@ -1,0 +1,47 @@
+pipeline {
+   agent {
+    docker{
+           image 'maven:3.6.1-jdk-8-slim'
+           args '-v $HOME/.m2:/root/.m2'
+         }
+
+   }
+
+
+   stages {
+      stage('build') {
+         when {
+            changeset "java/cmad-ms-users/**"
+         }
+         steps {
+            echo 'compiling users service'
+            dir('java/cmad-ms-users') {
+              sh 'mvn compile'
+            }
+         }
+      }
+      stage('test') {
+         when {
+            changeset "java/cmad-ms-users/**"
+         }
+         steps {
+            echo 'running unit tests on users service'
+            dir('java/cmad-ms-users') {
+              sh 'mvn clean test'
+            }
+         }
+      }
+      stage('package') {
+         when {
+            changeset "java/cmad-ms-users/**"
+            branch "master"
+         }
+         steps {
+            echo 'packaging users app'
+            dir('java/cmad-ms-users') {
+              sh 'mvn package -DskipTests'
+            }
+         }
+      }
+   }
+}
